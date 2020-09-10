@@ -1,0 +1,18 @@
+version: '3.6'
+services:
+
+  duplicacy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /:/host
+      - ./conf/duplicacy:/duplicacy/.duplicacy
+      - ./conf/ofelia:/etc/ofelia
+    environment:
+      DUPLICACY_SNAPSHOT_ID: mymachine
+      DUPLICACY_STORAGE_URL: s3://amazon/mymachine
+      DUPLICACY_REPOSITORY: /host
+      DUPLICACY_PASSWORD: '***************'
+      DUPLICACY_S3_ID: '***************'
+      DUPLICACY_S3_SECRET: '***************'
