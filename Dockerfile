@@ -1,26 +1,23 @@
+FROM golang:1.13.10-alpine AS ofelia
+ARG OFELIA_VERSION=0.3.0
+
+RUN apk --no-cache add gcc musl-dev
+
+WORKDIR ${GOPATH}/src/github.com/mcuadros/ofelia
+RUN wget -O - https://github.com/mcuadros/ofelia/archive/v${OFELIA_VERSION}.tar.gz | \
+    tar -xz --strip 1 -C ${GOPATH}/src/github.com/mcuadros/ofelia
+
+RUN go build -o /go/bin/ofelia .
+
+
+FROM azinchen/duplicacy AS duplicacy
+
+
 FROM alpine:3.11
 MAINTAINER Nekmo com <contacto@nekmo.com>
 
-#--
-#-- Build variables
-#--
-ARG DUPLICACY_VERSION=2.6.2
-ARG OFELIA_VERSION=0.3.0
-
-
-#--
-#-- Environment variables
-#--
-
-
-#--
-#-- Build steps
-#--
-RUN apk --no-cache add ca-certificates tzdata libc6-compat && update-ca-certificates
-RUN wget https://github.com/gilbertchen/duplicacy/releases/download/v${DUPLICACY_VERSION}/duplicacy_linux_x64_${DUPLICACY_VERSION} -O /usr/bin/duplicacy && \
-    chmod +x /usr/bin/duplicacy
-RUN wget -O - https://github.com/mcuadros/ofelia/releases/download/v${OFELIA_VERSION}/ofelia-v${OFELIA_VERSION}-linux-amd64.tar.gz | tar -xz -C /usr/bin/ && \
-    chmod +x /usr/bin/ofelia
+COPY --from=ofelia /go/bin/ofelia /usr/bin/ofelia
+COPY --from=duplicacy /usr/bin/duplicacy /usr/bin/duplicacy
 
 RUN mkdir /app && mkdir /duplicacy
 WORKDIR /app
