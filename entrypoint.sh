@@ -1,8 +1,9 @@
 #!/bin/sh
 
 do_init() {
-  : ${BACKUP_NAME:?'Missing BACKUP_NAME'}
-  : ${BACKUP_LOCATION:?'Missing BACKUP_LOCATION'}
+  : ${DUPLICACY_REPOSITORY:?'Missing DUPLICACY_REPOSITORY'}
+  : ${DUPLICACY_SNAPSHOT_ID:?'Missing DUPLICACY_SNAPSHOT_ID'}
+  : ${DUPLICACY_STORAGE_URL:?'Missing DUPLICACY_STORAGE_URL'}
 
   duplicacy init -repository "${DUPLICACY_REPOSITORY}" "${DUPLICACY_SNAPSHOT_ID}" "${DUPLICACY_STORAGE_URL}"
   if [[ $? != 0 ]]; then
@@ -12,7 +13,7 @@ do_init() {
   fi
 }
 
-if [[ ! -d .duplicacy ]]; then
+if [[ ! -d .duplicacy/preferences ]]; then
     do_init
 else
     echo 'This folder has already been initialized with duplicacy. Not initializing again'
